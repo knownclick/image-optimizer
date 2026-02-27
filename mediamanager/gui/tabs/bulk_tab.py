@@ -5,6 +5,7 @@ from __future__ import annotations
 import customtkinter as ctk
 
 from mediamanager.gui.components.file_picker import FilePicker
+from mediamanager.gui.components.profile_selector import ProfileSelector
 from mediamanager.gui.components.settings_panel import (
     DimensionInput,
     FormatSelector,
@@ -15,15 +16,11 @@ from mediamanager.gui.components.progress_panel import ProgressPanel
 from mediamanager.gui.components.result_summary import ResultSummary
 from mediamanager.gui.components.error_dialog import show_error
 from mediamanager.gui.workers import WorkerThread, make_threadsafe_progress_cb, make_threadsafe_error_cb
-from mediamanager.gui.theme import FONTS
+from mediamanager.gui.theme import COLORS, FONTS, WIDGET_COLORS
 from mediamanager.core.types import OverwritePolicy, ResizeMode
 
-_DROPDOWN_FG = "#2563EB"
-_DROPDOWN_HOVER = "#1D4ED8"
-_DROPDOWN_TEXT = "#FFFFFF"
 
-
-class BulkTab(ctk.CTkFrame):
+class BulkTab(ctk.CTkScrollableFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self._worker = None
@@ -36,9 +33,9 @@ class BulkTab(ctk.CTkFrame):
         self._mode_btn = ctk.CTkSegmentedButton(
             mode_frame, values=["process", "thumbnail", "rename"],
             variable=self._mode_var, command=self._on_mode_change,
-            selected_color=_DROPDOWN_FG,
-            selected_hover_color=_DROPDOWN_HOVER,
-            text_color=_DROPDOWN_TEXT,
+            selected_color=WIDGET_COLORS["dropdown_fg"],
+            selected_hover_color=WIDGET_COLORS["dropdown_hover"],
+            text_color=WIDGET_COLORS["dropdown_text"],
         )
         self._mode_btn.pack(side="left", padx=5)
 
@@ -96,10 +93,10 @@ class BulkTab(ctk.CTkFrame):
         ctk.CTkOptionMenu(
             mode_row, values=["fit", "exact", "fill"],
             variable=self._resize_mode_var,
-            fg_color=_DROPDOWN_FG,
-            button_color=_DROPDOWN_FG,
-            button_hover_color=_DROPDOWN_HOVER,
-            text_color=_DROPDOWN_TEXT,
+            fg_color=WIDGET_COLORS["dropdown_fg"],
+            button_color=WIDGET_COLORS["dropdown_fg"],
+            button_hover_color=WIDGET_COLORS["dropdown_hover"],
+            text_color=WIDGET_COLORS["dropdown_text"],
         ).pack(side="left")
 
         self._dims = DimensionInput(self._resize_frame)
@@ -131,11 +128,14 @@ class BulkTab(ctk.CTkFrame):
         self._meta_frame = ctk.CTkFrame(self._meta_section)
         # Not packed — hidden by default
 
+        self._profile_selector = ProfileSelector(self._meta_frame, on_select=self._load_profile)
+        self._profile_selector.pack(fill="x", padx=5, pady=(2, 5))
+
         self._meta_fields = MetadataFields(self._meta_frame)
         self._meta_fields.pack(fill="x", padx=5, pady=2)
         ctk.CTkLabel(
             self._meta_frame,
-            text="Only JPEG and WebP support EXIF writing",
+            text="JPEG, PNG, and WebP support EXIF writing",
             text_color="gray", font=FONTS["small"],
         ).pack(anchor="w", padx=5, pady=(0, 2))
 
@@ -243,14 +243,25 @@ class BulkTab(ctk.CTkFrame):
 
         btn_frame = ctk.CTkFrame(self)
         btn_frame.pack(fill="x", padx=10, pady=5)
-        self._btn = ctk.CTkButton(btn_frame, text="Start", command=self._run, height=36)
+        self._btn = ctk.CTkButton(
+            btn_frame, text="Start", command=self._run, height=36,
+            fg_color=WIDGET_COLORS["button_primary"],
+            hover_color=WIDGET_COLORS["button_primary_hover"],
+        )
         self._btn.pack(side="left", padx=(0, 5))
-        self._cancel_btn = ctk.CTkButton(btn_frame, text="Cancel", command=self._cancel,
-                                          height=36, state="disabled", fg_color="#DC2626")
+        self._cancel_btn = ctk.CTkButton(
+            btn_frame, text="Cancel", command=self._cancel,
+            height=36, state="disabled",
+            fg_color=WIDGET_COLORS["button_danger"],
+            hover_color=WIDGET_COLORS["button_danger_hover"],
+        )
         self._cancel_btn.pack(side="left")
 
         self._result = ResultSummary(self)
         self._result.pack(fill="x", padx=10, pady=(0, 10))
+
+    def _load_profile(self, fields: dict[str, str]) -> None:
+        self._meta_fields.set_fields(fields)
 
     def _toggle_resize(self):
         if self._resize_var.get():

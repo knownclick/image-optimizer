@@ -51,6 +51,8 @@ If installed via pip, you can also use the `mediamanager` entry point directly:
 mediamanager convert photo.jpg photo.webp -f webp
 ```
 
+> **Metadata profiles** (save/load reusable metadata presets) are available in the GUI only. Use the Profiles tab to manage them, then load profiles from the dropdown in the Process, Metadata, or Bulk tabs.
+
 ---
 
 ## convert

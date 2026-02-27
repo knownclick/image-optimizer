@@ -6,6 +6,7 @@ import customtkinter as ctk
 
 from mediamanager.gui.components.file_picker import FilePicker
 from mediamanager.gui.components.image_preview import ImagePreview
+from mediamanager.gui.components.profile_selector import ProfileSelector
 from mediamanager.gui.components.settings_panel import (
     DimensionInput,
     FormatSelector,
@@ -15,7 +16,7 @@ from mediamanager.gui.components.settings_panel import (
 from mediamanager.gui.components.result_summary import ResultSummary
 from mediamanager.gui.components.error_dialog import show_error
 from mediamanager.gui.workers import WorkerThread
-from mediamanager.gui.theme import FONTS
+from mediamanager.gui.theme import FONTS, WIDGET_COLORS
 from mediamanager.core.types import OverwritePolicy, ResizeMode
 
 # Format name -> file extension
@@ -28,10 +29,6 @@ _RESIZE_MODES = {
     "Fill (crop)": "fill",
     "Scale by %": "percentage",
 }
-
-_DROPDOWN_FG = "#2563EB"
-_DROPDOWN_HOVER = "#1D4ED8"
-_DROPDOWN_TEXT = "#FFFFFF"
 
 
 class ProcessTab(ctk.CTkScrollableFrame):
@@ -93,10 +90,10 @@ class ProcessTab(ctk.CTkScrollableFrame):
             mode_frame, values=list(_RESIZE_MODES.keys()),
             variable=self._mode_var,
             command=self._on_resize_mode_change,
-            fg_color=_DROPDOWN_FG,
-            button_color=_DROPDOWN_FG,
-            button_hover_color=_DROPDOWN_HOVER,
-            text_color=_DROPDOWN_TEXT,
+            fg_color=WIDGET_COLORS["dropdown_fg"],
+            button_color=WIDGET_COLORS["dropdown_fg"],
+            button_hover_color=WIDGET_COLORS["dropdown_hover"],
+            text_color=WIDGET_COLORS["dropdown_text"],
         )
         self._mode_menu.pack(side="left")
 
@@ -153,12 +150,15 @@ class ProcessTab(ctk.CTkScrollableFrame):
         self._meta_frame = ctk.CTkFrame(self._meta_section)
         # Not packed — hidden by default
 
+        self._profile_selector = ProfileSelector(self._meta_frame, on_select=self._load_profile)
+        self._profile_selector.pack(fill="x", padx=5, pady=(2, 5))
+
         self._meta_fields = MetadataFields(self._meta_frame)
         self._meta_fields.pack(fill="x", padx=5, pady=2)
 
         ctk.CTkLabel(
             self._meta_frame,
-            text="Only JPEG and WebP support EXIF writing",
+            text="JPEG, PNG, and WebP support EXIF writing",
             text_color="gray", font=FONTS["small"],
         ).pack(anchor="w", padx=5, pady=(0, 2))
 
@@ -171,7 +171,11 @@ class ProcessTab(ctk.CTkScrollableFrame):
         self._output.pack(fill="x", padx=10, pady=2)
 
         # ── Action ───────────────────────────────────────────────
-        self._btn = ctk.CTkButton(self, text="Process", command=self._run, height=36)
+        self._btn = ctk.CTkButton(
+            self, text="Process", command=self._run, height=36,
+            fg_color=WIDGET_COLORS["button_primary"],
+            hover_color=WIDGET_COLORS["button_primary_hover"],
+        )
         self._btn.pack(padx=10, pady=10)
 
         self._result = ResultSummary(self)
@@ -248,6 +252,9 @@ class ProcessTab(ctk.CTkScrollableFrame):
                 "fill": "Image will be cropped to fill exact dimensions",
             }
             self._dims_hint.configure(text=hints.get(mode, ""))
+
+    def _load_profile(self, fields: dict[str, str]) -> None:
+        self._meta_fields.set_fields(fields)
 
     # ── Run ──────────────────────────────────────────────────
 

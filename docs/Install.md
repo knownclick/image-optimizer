@@ -167,7 +167,24 @@ See [CLI.md](CLI.md) for the full command reference.
 
 Build a single-file executable that runs without Python installed. Useful for distributing to team members or deploying on machines without a Python environment.
 
-### Install build dependencies
+### Using the build script (recommended)
+
+The included `build.py` script handles everything automatically — venv creation, dependency installation, and PyInstaller packaging. It works on all platforms:
+
+```bash
+python build.py              # Folder distribution (faster startup)
+python build.py --onefile    # Single executable (easier to distribute)
+python build.py --clean      # Remove build artifacts
+python build.py --install-deps  # Only install dependencies (no build)
+```
+
+The script will create a virtual environment if needed and re-launch itself inside it.
+
+### Manual build
+
+If you prefer to build manually:
+
+#### Install build dependencies
 
 ```bash
 pip install -r requirements-build.txt
@@ -175,7 +192,7 @@ pip install -r requirements-build.txt
 
 This installs PyInstaller and any other build-time dependencies.
 
-### Build on macOS
+#### Build on macOS
 
 ```bash
 source .venv/bin/activate
@@ -195,7 +212,7 @@ To make it accessible system-wide:
 cp dist/ImageOptimizer /usr/local/bin/image-optimizer
 ```
 
-### Build on Windows
+#### Build on Windows
 
 ```cmd
 .venv\Scripts\activate
@@ -211,7 +228,7 @@ dist\ImageOptimizer.exe --help
 
 Double-click `ImageOptimizer.exe` to launch the GUI directly (a console window will appear briefly — this is normal).
 
-### Build on Linux
+#### Build on Linux
 
 ```bash
 source .venv/bin/activate

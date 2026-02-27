@@ -13,6 +13,7 @@ Created by **Hency Prajapati** at [Known Click Technologies](https://knownclick.
 - **Compression** — Quality slider, lossless mode, target file size
 - **Thumbnails** — Multiple preset sizes, custom dimensions, prefix/suffix naming, square crop
 - **Metadata** — Read, write, and strip EXIF data (artist, copyright, description, etc.)
+- **Metadata profiles** — Save and load reusable metadata presets (e.g., per-client or per-project)
 - **Favicon** — Generate multi-size ICO files from any image
 - **Bulk operations** — Process, rename, and thumbnail entire folders with progress tracking
 - **Error reporting** — Per-file error logging during bulk operations with detailed results
@@ -74,7 +75,7 @@ python -m mediamanager --gui
 
 Or if using the standalone binary, just double-click `ImageOptimizer`.
 
-The GUI has six tabs:
+The GUI has seven tabs:
 
 | Tab | Purpose |
 |-----|---------|
@@ -83,7 +84,10 @@ The GUI has six tabs:
 | **Metadata** | View, edit, or strip EXIF data |
 | **Favicon** | Create multi-size ICO favicons |
 | **Bulk** | Process, thumbnail, or rename entire folders |
+| **Profiles** | Create, edit, and delete reusable metadata profiles |
 | **CLI** | Built-in reference for command line usage |
+
+The Process, Metadata, and Bulk tabs include a profile dropdown that loads saved metadata values into their fields.
 
 ### Command Line
 
@@ -196,6 +200,16 @@ pytest tests/ -v
 
 ### Build standalone binary
 
+The included build script handles venv creation, dependency installation, and PyInstaller packaging automatically:
+
+```bash
+python build.py              # Folder distribution
+python build.py --onefile    # Single executable
+python build.py --clean      # Remove build artifacts
+```
+
+Or build manually:
+
 ```bash
 pip install -r requirements-build.txt
 pyinstaller --clean --noconfirm mediamanager_onefile.spec
@@ -231,6 +245,9 @@ mediamanager/
     gui/
         app.py               # Main window with tabbed layout
         theme.py             # Colors, fonts, platform-specific settings
+        field_defs.py        # Shared metadata field constants
+        profiles.py          # Profile CRUD (JSON persistence)
+        profiles/            # Saved profile JSON files
         tabs/                # One file per tab
         components/          # Reusable GUI widgets
         workers.py           # Threading for non-blocking operations

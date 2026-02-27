@@ -7,10 +7,12 @@ import json
 import customtkinter as ctk
 
 from mediamanager.gui.components.file_picker import FilePicker
+from mediamanager.gui.components.profile_selector import ProfileSelector
 from mediamanager.gui.components.result_summary import ResultSummary
 from mediamanager.gui.components.error_dialog import show_error
+from mediamanager.gui.field_defs import ALL_FIELD_GROUPS, FIELD_LABELS, FIELD_PLACEHOLDERS
 from mediamanager.gui.workers import WorkerThread
-from mediamanager.gui.theme import FONTS
+from mediamanager.gui.theme import FONTS, WIDGET_COLORS
 from mediamanager.core.types import OverwritePolicy
 
 
@@ -26,7 +28,11 @@ class MetadataTab(ctk.CTkScrollableFrame):
 
         # Read section
         ctk.CTkLabel(self, text="Read Metadata", font=FONTS["subheading"]).pack(anchor="w", padx=10, pady=(10, 2))
-        self._read_btn = ctk.CTkButton(self, text="Read Metadata", command=self._read)
+        self._read_btn = ctk.CTkButton(
+            self, text="Read Metadata", command=self._read,
+            fg_color=WIDGET_COLORS["button_primary"],
+            hover_color=WIDGET_COLORS["button_primary_hover"],
+        )
         self._read_btn.pack(anchor="w", padx=10, pady=2)
 
         self._meta_display = ctk.CTkTextbox(self, height=180, state="disabled")
@@ -36,27 +42,49 @@ class MetadataTab(ctk.CTkScrollableFrame):
         ctk.CTkLabel(self, text="Strip Metadata", font=FONTS["subheading"]).pack(anchor="w", padx=10, pady=(10, 2))
         self._strip_output = FilePicker(self, label="Save as:", mode="save")
         self._strip_output.pack(fill="x", padx=10, pady=2)
-        self._strip_btn = ctk.CTkButton(self, text="Strip All Metadata", command=self._strip)
+        self._strip_btn = ctk.CTkButton(
+            self, text="Strip All Metadata", command=self._strip,
+            fg_color=WIDGET_COLORS["button_danger"],
+            hover_color=WIDGET_COLORS["button_danger_hover"],
+        )
         self._strip_btn.pack(anchor="w", padx=10, pady=2)
 
         # Write section
         ctk.CTkLabel(self, text="Write Metadata", font=FONTS["subheading"]).pack(anchor="w", padx=10, pady=(10, 2))
 
+        self._profile_selector = ProfileSelector(self, on_select=self._load_profile)
+        self._profile_selector.pack(fill="x", padx=10, pady=(0, 5))
+
+        self._fields: dict[str, ctk.CTkEntry] = {}
+
+        def add_field_group(parent, label: str, field_names: list[str]):
+            ctk.CTkLabel(parent, text=label, font=FONTS["section"]).pack(
+                anchor="w", padx=5, pady=(6, 1)
+            )
+            frame = ctk.CTkFrame(parent)
+            frame.pack(fill="x", padx=5, pady=2)
+            for field_name in field_names:
+                row = ctk.CTkFrame(frame)
+                row.pack(fill="x", pady=1)
+                display_label = FIELD_LABELS.get(field_name, field_name.replace("_", " ").title())
+                ctk.CTkLabel(row, text=f"{display_label}:", width=110, anchor="w").pack(side="left")
+                entry = ctk.CTkEntry(row, placeholder_text=FIELD_PLACEHOLDERS.get(field_name, ""))
+                entry.pack(side="left", fill="x", expand=True, padx=5)
+                self._fields[field_name] = entry
+
         fields_frame = ctk.CTkFrame(self)
         fields_frame.pack(fill="x", padx=10, pady=2)
 
-        self._fields: dict[str, ctk.CTkEntry] = {}
-        for field_name in ["artist", "copyright", "description", "software", "comment"]:
-            row = ctk.CTkFrame(fields_frame)
-            row.pack(fill="x", pady=1)
-            ctk.CTkLabel(row, text=f"{field_name.title()}:", width=90, anchor="w").pack(side="left")
-            entry = ctk.CTkEntry(row)
-            entry.pack(side="left", fill="x", expand=True, padx=5)
-            self._fields[field_name] = entry
+        for group_label, field_names in ALL_FIELD_GROUPS:
+            add_field_group(fields_frame, group_label, field_names)
 
         self._write_output = FilePicker(self, label="Save as:", mode="save")
         self._write_output.pack(fill="x", padx=10, pady=2)
-        self._write_btn = ctk.CTkButton(self, text="Write Metadata", command=self._write)
+        self._write_btn = ctk.CTkButton(
+            self, text="Write Metadata", command=self._write,
+            fg_color=WIDGET_COLORS["button_primary"],
+            hover_color=WIDGET_COLORS["button_primary_hover"],
+        )
         self._write_btn.pack(anchor="w", padx=10, pady=2)
 
         self._result = ResultSummary(self)
@@ -153,6 +181,14 @@ class MetadataTab(ctk.CTkScrollableFrame):
     def _on_op_complete(self, result):
         self._set_buttons_state("normal")
         self._result.show_result(result)
+
+    def _load_profile(self, fields: dict[str, str]) -> None:
+        """Fill the write-section entries from a profile."""
+        for name, entry in self._fields.items():
+            entry.delete(0, "end")
+            value = fields.get(name, "")
+            if value:
+                entry.insert(0, value)
 
     def _on_error(self, error):
         self._set_buttons_state("normal")

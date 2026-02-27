@@ -4,10 +4,7 @@ from __future__ import annotations
 
 import customtkinter as ctk
 
-# Dark-mode-friendly colors for dropdown widgets
-_DROPDOWN_FG = "#2563EB"
-_DROPDOWN_HOVER = "#1D4ED8"
-_DROPDOWN_TEXT = "#FFFFFF"
+from mediamanager.gui.theme import WIDGET_COLORS
 
 
 class QualitySlider(ctk.CTkFrame):
@@ -92,10 +89,10 @@ class FormatSelector(ctk.CTkFrame):
         self._menu = ctk.CTkOptionMenu(
             self, values=values, variable=self._var,
             command=self._on_select,
-            fg_color=_DROPDOWN_FG,
-            button_color=_DROPDOWN_FG,
-            button_hover_color=_DROPDOWN_HOVER,
-            text_color=_DROPDOWN_TEXT,
+            fg_color=WIDGET_COLORS["dropdown_fg"],
+            button_color=WIDGET_COLORS["dropdown_fg"],
+            button_hover_color=WIDGET_COLORS["dropdown_hover"],
+            text_color=WIDGET_COLORS["dropdown_text"],
         )
         self._menu.pack(side="left")
 
@@ -111,7 +108,15 @@ class FormatSelector(ctk.CTkFrame):
 class MetadataFields(ctk.CTkFrame):
     """EXIF metadata field entries for write operations."""
 
-    FIELD_NAMES = ["artist", "copyright", "description", "software", "comment"]
+    FIELD_NAMES = [
+        "artist", "copyright", "description", "title",
+        "keywords", "software", "comment", "datetime",
+    ]
+
+    _PLACEHOLDERS = {
+        "datetime": "YYYY:MM:DD HH:MM:SS",
+        "keywords": "keyword1; keyword2; ...",
+    }
 
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -121,7 +126,8 @@ class MetadataFields(ctk.CTkFrame):
             row = ctk.CTkFrame(self)
             row.pack(fill="x", pady=1)
             ctk.CTkLabel(row, text=f"{field_name.title()}:", width=90, anchor="w").pack(side="left")
-            entry = ctk.CTkEntry(row)
+            placeholder = self._PLACEHOLDERS.get(field_name, "")
+            entry = ctk.CTkEntry(row, placeholder_text=placeholder)
             entry.pack(side="left", fill="x", expand=True, padx=5)
             self._entries[field_name] = entry
 
@@ -133,6 +139,17 @@ class MetadataFields(ctk.CTkFrame):
             if val:
                 fields[name] = val
         return fields
+
+    def set_fields(self, fields: dict[str, str]) -> None:
+        """Clear all entries, then fill from *fields* dict.
+
+        Keys not present in this widget are silently ignored.
+        """
+        for name, entry in self._entries.items():
+            entry.delete(0, "end")
+            value = fields.get(name, "")
+            if value:
+                entry.insert(0, value)
 
     def set_state(self, state: str):
         for entry in self._entries.values():

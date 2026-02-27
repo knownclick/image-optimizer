@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import customtkinter as ctk
 
-from mediamanager.gui.theme import FONTS
+from mediamanager.gui.theme import FONTS, WIDGET_COLORS
 from mediamanager.gui.tabs.process_tab import ProcessTab
 from mediamanager.gui.tabs.thumbnail_tab import ThumbnailTab
 from mediamanager.gui.tabs.metadata_tab import MetadataTab
 from mediamanager.gui.tabs.favicon_tab import FaviconTab
 from mediamanager.gui.tabs.bulk_tab import BulkTab
+from mediamanager.gui.tabs.profiles_tab import ProfilesTab
 from mediamanager.gui.tabs.cli_tab import CLITab
 
 
@@ -44,9 +45,9 @@ class MediaManagerApp(ctk.CTk):
             header, values=["dark", "light"],
             variable=self._theme_var,
             command=self._toggle_theme,
-            selected_color="#2563EB",
-            selected_hover_color="#1D4ED8",
-            text_color="#FFFFFF",
+            selected_color=WIDGET_COLORS["dropdown_fg"],
+            selected_hover_color=WIDGET_COLORS["dropdown_hover"],
+            text_color=WIDGET_COLORS["dropdown_text"],
         ).pack(side="right", padx=10)
 
         # Tab view
@@ -68,6 +69,9 @@ class MediaManagerApp(ctk.CTk):
 
         bulk_tab = self._tabs.add("Bulk")
         BulkTab(bulk_tab).pack(fill="both", expand=True)
+
+        profiles_tab = self._tabs.add("Profiles")
+        ProfilesTab(profiles_tab).pack(fill="both", expand=True)
 
         cli_tab = self._tabs.add("CLI")
         CLITab(cli_tab).pack(fill="both", expand=True)
