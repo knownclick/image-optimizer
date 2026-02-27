@@ -43,7 +43,7 @@ FORMAT_ALIASES: dict[str, str] = {
 
 # ── Formats that support EXIF writing via piexif ───────────────────────────
 
-EXIF_WRITABLE_FORMATS: set[ImageFormat] = {ImageFormat.JPEG, ImageFormat.WEBP}
+EXIF_WRITABLE_FORMATS: set[ImageFormat] = {ImageFormat.JPEG, ImageFormat.WEBP, ImageFormat.PNG}
 
 # ── Quality ranges per format ──────────────────────────────────────────────
 

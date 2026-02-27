@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import customtkinter as ctk
 
+from mediamanager.gui.theme import COLORS
+
 
 class ProgressPanel(ctk.CTkFrame):
     """Progress bar + scrollable log with error support."""
@@ -19,7 +21,7 @@ class ProgressPanel(ctk.CTkFrame):
         self._status_label.pack(fill="x", padx=5)
 
         self._error_count = 0
-        self._error_label = ctk.CTkLabel(self, text="", anchor="w", text_color="#DC2626")
+        self._error_label = ctk.CTkLabel(self, text="", anchor="w", text_color=COLORS["error"])
         self._error_label.pack(fill="x", padx=5)
 
         self._log = ctk.CTkTextbox(self, height=150, state="disabled")

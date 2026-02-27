@@ -137,9 +137,22 @@ Read, write, or strip image EXIF metadata.
     --artist           Artist name
     --copyright        Copyright notice
     --description      Image description
+    --title            Image title
+    --keywords         Keywords (semicolon-separated)
+    --subject          Subject description
     --software         Software used
-    --datetime         Date/time string
-    --comment          User comment
+    --comment          User comment (supports Unicode)
+    --make             Camera manufacturer
+    --model            Camera model
+    --lens-make        Lens manufacturer
+    --lens-model       Lens model
+    --datetime         Date/time (YYYY:MM:DD HH:MM:SS)
+    --datetime-original  Original capture date
+    --datetime-digitized Digitized date
+    --orientation      Image orientation (1-8)
+    --iso              ISO speed (1-65535)
+    --gps-latitude     GPS latitude in decimal degrees
+    --gps-longitude    GPS longitude in decimal degrees
     --overwrite        Overwrite existing output
 
   Examples:
@@ -148,6 +161,8 @@ Read, write, or strip image EXIF metadata.
     python -m mediamanager metadata strip photo.jpg clean.jpg
     python -m mediamanager metadata strip photo.jpg --in-place
     python -m mediamanager metadata write photo.jpg out.jpg --artist "John" --copyright "2024"
+    python -m mediamanager metadata write photo.jpg out.jpg --make "Canon" --model "EOS R5"
+    python -m mediamanager metadata write photo.jpg out.jpg --gps-latitude 40.7128 --gps-longitude -74.0060
 
 
 FAVICON
@@ -235,7 +250,7 @@ TIPS
   - Use --dry-run with bulk rename to preview changes before committing
   - Quality 80-85 for JPEG/WebP gives a good balance of size and quality
   - For lossless compression, use WebP with --lossless flag
-  - EXIF metadata writing only works with JPEG and WebP formats
+  - EXIF metadata writing works with JPEG, PNG, and WebP formats
 """
 
 

@@ -6,7 +6,7 @@ import customtkinter as ctk
 
 from mediamanager.core.types import OperationResult, BulkResult
 from mediamanager.core.utils import format_file_size
-from mediamanager.gui.theme import FONTS
+from mediamanager.gui.theme import COLORS, FONTS
 
 
 class ResultSummary(ctk.CTkFrame):
@@ -30,7 +30,7 @@ class ResultSummary(ctk.CTkFrame):
         self._details.pack(fill="x", padx=5, pady=(0, 5))
 
         if result.success:
-            self._status.configure(text="Success", text_color="#16A34A")
+            self._status.configure(text="Success", text_color=COLORS["success"])
             details = []
             if result.output_path:
                 details.append(f"Saved: {result.output_path}")
@@ -42,7 +42,7 @@ class ResultSummary(ctk.CTkFrame):
                 details.append(f"Warnings: {'; '.join(result.warnings)}")
             self._details.configure(text="\n".join(details))
         else:
-            self._status.configure(text="Failed", text_color="#DC2626")
+            self._status.configure(text="Failed", text_color=COLORS["error"])
             self._details.configure(text=result.error_message or "Unknown error")
 
     def show_bulk_result(self, result: BulkResult) -> None:
@@ -51,10 +51,10 @@ class ResultSummary(ctk.CTkFrame):
         self._log.pack(fill="both", expand=True, padx=5, pady=(0, 5))
 
         if result.failed == 0:
-            color = "#16A34A"
+            color = COLORS["success"]
             status = f"Done: {result.succeeded}/{result.total} succeeded"
         else:
-            color = "#D97706"
+            color = COLORS["warning"]
             status = f"Done: {result.succeeded} OK, {result.failed} failed"
             if result.skipped:
                 status += f", {result.skipped} skipped"

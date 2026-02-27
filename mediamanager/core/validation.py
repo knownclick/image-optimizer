@@ -191,12 +191,27 @@ def validate_rename_pattern(
 
 
 KNOWN_EXIF_FIELDS: set[str] = {
+    # Original fields
     "artist", "copyright", "description", "software", "datetime", "comment",
+    # Camera / device
+    "make", "model",
+    # Additional dates
+    "datetime_original", "datetime_digitized",
+    # Windows XP extended fields
+    "title", "keywords", "subject",
+    # Lens info
+    "lens_make", "lens_model",
+    # Numeric fields
+    "orientation", "iso",
+    # GPS
+    "gps_latitude", "gps_longitude",
 }
+
+_DATETIME_FIELDS: set[str] = {"datetime", "datetime_original", "datetime_digitized"}
 
 
 def validate_exif_fields(fields: dict[str, str]) -> dict[str, str]:
-    """Check EXIF field keys are recognized."""
+    """Check EXIF field keys are recognized and values are valid."""
     unknown = set(fields.keys()) - KNOWN_EXIF_FIELDS
     if unknown:
         suggestions = ", ".join(sorted(KNOWN_EXIF_FIELDS))
@@ -204,4 +219,77 @@ def validate_exif_fields(fields: dict[str, str]) -> dict[str, str]:
             f"Unknown EXIF fields: {', '.join(sorted(unknown))}. "
             f"Supported: {suggestions}"
         )
+
+    # Validate datetime fields
+    for key in _DATETIME_FIELDS:
+        if key in fields:
+            validate_datetime_format(fields[key], key)
+
+    # Validate orientation
+    if "orientation" in fields:
+        validate_orientation(fields["orientation"])
+
+    # Validate ISO
+    if "iso" in fields:
+        try:
+            val = int(fields["iso"])
+            if val < 1 or val > 65535:
+                raise ValidationError(
+                    f"ISO must be between 1 and 65535, got {val}"
+                )
+        except ValueError:
+            raise ValidationError(
+                f"ISO must be an integer, got '{fields['iso']}'"
+            )
+
+    # Validate GPS coordinates
+    for coord in ("gps_latitude", "gps_longitude"):
+        if coord in fields:
+            validate_gps_coordinate(fields[coord], coord)
+
     return fields
+
+
+def validate_datetime_format(value: str, field_name: str = "datetime") -> str:
+    """Validate EXIF datetime format: 'YYYY:MM:DD HH:MM:SS'."""
+    dt_pattern = re.compile(r"^\d{4}:\d{2}:\d{2} \d{2}:\d{2}:\d{2}$")
+    if not dt_pattern.match(value):
+        raise ValidationError(
+            f"'{field_name}' must be in EXIF format 'YYYY:MM:DD HH:MM:SS', "
+            f"got '{value}'"
+        )
+    return value
+
+
+def validate_orientation(value: str) -> int:
+    """Validate EXIF orientation value (1-8)."""
+    try:
+        val = int(value)
+    except ValueError:
+        raise ValidationError(
+            f"Orientation must be an integer 1-8, got '{value}'"
+        )
+    if val < 1 or val > 8:
+        raise ValidationError(
+            f"Orientation must be between 1 and 8, got {val}"
+        )
+    return val
+
+
+def validate_gps_coordinate(value: str, field_name: str) -> float:
+    """Validate a GPS coordinate (decimal degrees)."""
+    try:
+        coord = float(value)
+    except ValueError:
+        raise ValidationError(
+            f"'{field_name}' must be a decimal number, got '{value}'"
+        )
+    if "latitude" in field_name and (coord < -90.0 or coord > 90.0):
+        raise ValidationError(
+            f"Latitude must be between -90 and 90, got {coord}"
+        )
+    if "longitude" in field_name and (coord < -180.0 or coord > 180.0):
+        raise ValidationError(
+            f"Longitude must be between -180 and 180, got {coord}"
+        )
+    return coord

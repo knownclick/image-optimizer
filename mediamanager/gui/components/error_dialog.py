@@ -14,7 +14,7 @@ class ErrorDialog(ctk.CTkToplevel):
         super().__init__(master)
         self.title(title)
         self.geometry("400x200")
-        self.resizable(False, False)
+        self.resizable(False, True)
         self.transient(master.winfo_toplevel())
         self.grab_set()
         self.lift()

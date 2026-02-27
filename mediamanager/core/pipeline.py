@@ -119,29 +119,10 @@ class Pipeline:
         if not self._strip_exif:
             if self._exif_fields:
                 try:
-                    import piexif
+                    from mediamanager.core.metadata import build_exif_bytes
                     existing = img.info.get("exif", b"")
-                    try:
-                        exif_dict = piexif.load(existing) if existing else {
-                            "0th": {}, "Exif": {}, "GPS": {}, "1st": {}, "thumbnail": None,
-                        }
-                    except Exception:
-                        exif_dict = {
-                            "0th": {}, "Exif": {}, "GPS": {}, "1st": {}, "thumbnail": None,
-                        }
-
-                    from mediamanager.core.metadata import _init_field_map, _EXIF_FIELD_MAP
-                    _init_field_map()
-                    for field_name, value in self._exif_fields.items():
-                        mapping = _EXIF_FIELD_MAP.get(field_name)
-                        if mapping:
-                            ifd_name, tag_id = mapping
-                            if field_name == "comment":
-                                val_bytes = b"ASCII\x00\x00\x00" + value.encode("utf-8")
-                            else:
-                                val_bytes = value.encode("utf-8")
-                            exif_dict[ifd_name][tag_id] = val_bytes
-                    exif_bytes = piexif.dump(exif_dict)
+                    exif_bytes, exif_warnings = build_exif_bytes(existing, self._exif_fields)
+                    all_warnings.extend(exif_warnings)
                 except ImportError:
                     all_warnings.append("piexif not available, metadata not written")
             elif info.has_exif:

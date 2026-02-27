@@ -26,9 +26,20 @@ COLORS = {
     "text_light": "#1E293B",
 }
 
+WIDGET_COLORS = {
+    "dropdown_fg": "#2563EB",
+    "dropdown_hover": "#1D4ED8",
+    "dropdown_text": "#FFFFFF",
+    "button_primary": "#2563EB",
+    "button_primary_hover": "#1D4ED8",
+    "button_danger": "#DC2626",
+    "button_danger_hover": "#B91C1C",
+}
+
 FONTS = {
     "heading": (_SANS, 16, "bold"),
     "subheading": (_SANS, 13, "bold"),
+    "section": (_SANS, 11, "bold"),
     "body": (_SANS, 12),
     "small": (_SANS, 10),
     "mono": (_MONO, 11),

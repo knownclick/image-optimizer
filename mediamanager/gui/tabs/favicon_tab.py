@@ -9,7 +9,7 @@ from mediamanager.gui.components.image_preview import ImagePreview
 from mediamanager.gui.components.result_summary import ResultSummary
 from mediamanager.gui.components.error_dialog import show_error
 from mediamanager.gui.workers import WorkerThread
-from mediamanager.gui.theme import FONTS
+from mediamanager.gui.theme import FONTS, WIDGET_COLORS
 from mediamanager.core.types import OverwritePolicy
 
 
@@ -44,7 +44,11 @@ class FaviconTab(ctk.CTkScrollableFrame):
         self._output.pack(fill="x", padx=10, pady=2)
 
         # Action
-        self._btn = ctk.CTkButton(self, text="Generate Favicon", command=self._run, height=36)
+        self._btn = ctk.CTkButton(
+            self, text="Generate Favicon", command=self._run, height=36,
+            fg_color=WIDGET_COLORS["button_primary"],
+            hover_color=WIDGET_COLORS["button_primary_hover"],
+        )
         self._btn.pack(padx=10, pady=10)
 
         self._result = ResultSummary(self)
