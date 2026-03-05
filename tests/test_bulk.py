@@ -5,8 +5,8 @@ from pathlib import Path
 import pytest
 from PIL import Image
 
-from mediamanager.core.bulk import bulk_convert, bulk_rename
-from mediamanager.core.types import BulkOperationError, OverwritePolicy, ValidationError
+from image_optimizer.core.bulk import bulk_convert, bulk_rename
+from image_optimizer.core.types import BulkOperationError, OverwritePolicy, ValidationError
 
 
 class TestBulkConvert:

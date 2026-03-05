@@ -5,8 +5,8 @@ from pathlib import Path
 import pytest
 from PIL import Image
 
-from mediamanager.core.pipeline import Pipeline
-from mediamanager.core.types import ResizeMode
+from image_optimizer.core.pipeline import Pipeline
+from image_optimizer.core.types import ResizeMode
 
 
 class TestPipeline:

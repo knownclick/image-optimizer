@@ -5,9 +5,9 @@ from pathlib import Path
 import pytest
 from PIL import Image
 
-from mediamanager.core.bulk import bulk_process, bulk_thumbnails
-from mediamanager.core.thumbnail import generate_thumbnails
-from mediamanager.core.types import BulkOperationError, ResizeMode
+from image_optimizer.core.bulk import bulk_process, bulk_thumbnails
+from image_optimizer.core.thumbnail import generate_thumbnails
+from image_optimizer.core.types import BulkOperationError, ResizeMode
 
 
 class TestBulkProcess:

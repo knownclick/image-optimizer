@@ -5,8 +5,8 @@ from pathlib import Path
 import pytest
 from PIL import Image
 
-from mediamanager.core.resizer import calculate_dimensions, resize_image
-from mediamanager.core.types import ResizeMode, ValidationError
+from image_optimizer.core.resizer import calculate_dimensions, resize_image
+from image_optimizer.core.types import ResizeMode, ValidationError
 
 
 class TestCalculateDimensions:

@@ -69,7 +69,7 @@ pip --version
 4. **Verify installation:**
 
    ```bash
-   python -m mediamanager --version
+   python -m image_optimizer --version
    ```
 
 ### Windows
@@ -96,7 +96,7 @@ pip --version
 4. **Verify installation:**
 
    ```cmd
-   python -m mediamanager --version
+   python -m image_optimizer --version
    ```
 
 ### Linux
@@ -133,7 +133,7 @@ pip --version
 4. **Verify installation:**
 
    ```bash
-   python -m mediamanager --version
+   python -m image_optimizer --version
    ```
 
 > **Note:** Linux requires `python3-tk` (or equivalent) for the GUI. The CLI works without it.
@@ -149,14 +149,14 @@ pip --version
 source .venv/bin/activate      # macOS / Linux
 # .venv\Scripts\activate       # Windows
 
-python -m mediamanager --gui
+python -m image_optimizer --gui
 ```
 
 ### Use the CLI
 
 ```bash
-python -m mediamanager --help
-python -m mediamanager convert photo.jpg photo.webp -f webp
+python -m image_optimizer --help
+python -m image_optimizer convert photo.jpg photo.webp -f webp
 ```
 
 See [CLI.md](CLI.md) for the full command reference.

@@ -1,6 +1,6 @@
 @echo off
 REM ============================================================
-REM  MediaManager — Windows Build Script
+REM  Image Optimizer — Windows Build Script
 REM  Created by Hency Prajapati (Known Click Technologies)
 REM
 REM  Usage:
@@ -12,8 +12,8 @@ REM ============================================================
 setlocal enabledelayedexpansion
 
 echo.
-echo  MediaManager Build Script
-echo  =========================
+echo  Image Optimizer Build Script
+echo  ============================
 echo.
 
 REM Check Python is available
@@ -24,8 +24,8 @@ if errorlevel 1 (
 )
 
 REM Check we're in the right directory
-if not exist "mediamanager\__init__.py" (
-    echo ERROR: Run this script from the mediamanager project root directory.
+if not exist "image_optimizer\__init__.py" (
+    echo ERROR: Run this script from the project root directory.
     exit /b 1
 )
 
@@ -49,7 +49,7 @@ if errorlevel 1 (
 REM Install the package itself in editable mode
 pip install -e . --quiet
 if errorlevel 1 (
-    echo ERROR: Failed to install mediamanager package.
+    echo ERROR: Failed to install image_optimizer package.
     exit /b 1
 )
 
@@ -75,18 +75,18 @@ echo [3/3] Build complete!
 echo.
 
 if "%1"=="onefile" (
-    echo Output: dist\MediaManager.exe
+    echo Output: dist\ImageOptimizer.exe
     echo.
-    echo To run: dist\MediaManager.exe --gui
+    echo To run: dist\ImageOptimizer.exe --gui
 ) else (
-    echo Output: dist\MediaManager\MediaManager.exe
+    echo Output: dist\ImageOptimizer\ImageOptimizer.exe
     echo.
-    echo To run: dist\MediaManager\MediaManager.exe --gui
+    echo To run: dist\ImageOptimizer\ImageOptimizer.exe --gui
     echo.
-    echo To distribute: zip the dist\MediaManager folder.
+    echo To distribute: zip the dist\ImageOptimizer folder.
 )
 
 echo.
-echo CLI usage:  MediaManager.exe convert input.jpg output.png -f png
-echo GUI usage:  MediaManager.exe --gui
+echo CLI usage:  ImageOptimizer.exe convert input.jpg output.png -f png
+echo GUI usage:  ImageOptimizer.exe --gui
 echo.

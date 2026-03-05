@@ -5,8 +5,8 @@ from pathlib import Path
 import pytest
 from PIL import Image
 
-from mediamanager.core.compressor import compress_image
-from mediamanager.core.types import OverwritePolicy, ValidationError
+from image_optimizer.core.compressor import compress_image
+from image_optimizer.core.types import OverwritePolicy, ValidationError
 
 
 class TestCompressImage:

@@ -17,7 +17,7 @@ block_cipher = None
 ctk_datas = collect_data_files("customtkinter")
 
 # Collect all mediamanager submodules
-mm_hiddenimports = collect_submodules("mediamanager")
+mm_hiddenimports = collect_submodules("image_optimizer")
 
 # Optional: pillow-avif-plugin
 try:
@@ -27,7 +27,7 @@ except ImportError:
     avif_imports = []
 
 a = Analysis(
-    ["mediamanager/__main__.py"],
+    ["image_optimizer/__main__.py"],
     pathex=[],
     binaries=[],
     datas=ctk_datas,

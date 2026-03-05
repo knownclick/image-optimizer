@@ -5,13 +5,13 @@ from pathlib import Path
 
 import pytest
 
-from mediamanager.core.types import (
+from image_optimizer.core.types import (
     ImageFormat,
     OverwritePolicy,
     ValidationError,
     FormatNotAvailableError,
 )
-from mediamanager.core.validation import (
+from image_optimizer.core.validation import (
     validate_input_path,
     validate_output_path,
     validate_format,

@@ -5,13 +5,13 @@ from pathlib import Path
 import piexif
 import pytest
 
-from mediamanager.core.metadata import (
+from image_optimizer.core.metadata import (
     build_exif_bytes,
     read_metadata,
     strip_metadata,
     write_metadata,
 )
-from mediamanager.core.types import MetadataWriteUnsupportedError, OverwritePolicy, ValidationError
+from image_optimizer.core.types import MetadataWriteUnsupportedError, OverwritePolicy, ValidationError
 
 
 class TestReadMetadata:

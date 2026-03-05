@@ -5,8 +5,8 @@ from pathlib import Path
 import pytest
 from PIL import Image
 
-from mediamanager.core.thumbnail import generate_thumbnail
-from mediamanager.core.types import ThumbnailPreset
+from image_optimizer.core.thumbnail import generate_thumbnail
+from image_optimizer.core.types import ThumbnailPreset
 
 
 class TestGenerateThumbnail:

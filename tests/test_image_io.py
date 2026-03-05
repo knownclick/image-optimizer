@@ -6,8 +6,8 @@ from pathlib import Path
 import pytest
 from PIL import Image
 
-from mediamanager.core.image_io import load_image, save_image, detect_format, image_to_bytes
-from mediamanager.core.types import (
+from image_optimizer.core.image_io import load_image, save_image, detect_format, image_to_bytes
+from image_optimizer.core.types import (
     ImageFormat,
     ImageLoadError,
     OverwritePolicy,

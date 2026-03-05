@@ -6,8 +6,8 @@ from pathlib import Path
 import pytest
 from PIL import Image
 
-from mediamanager.core.favicon import generate_favicon
-from mediamanager.core.types import OverwritePolicy, ValidationError
+from image_optimizer.core.favicon import generate_favicon
+from image_optimizer.core.types import OverwritePolicy, ValidationError
 
 
 class TestGenerateFavicon:

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cross-platform build script for MediaManager.
+"""Cross-platform build script for Image Optimizer.
 
 Usage:
     python build.py                 # Build folder distribution
@@ -106,16 +106,16 @@ def build(onefile: bool = False):
     print(f"\n[3] Build complete!")
     if onefile:
         if sys.platform == "win32":
-            exe = DIST_DIR / "MediaManager.exe"
+            exe = DIST_DIR / "ImageOptimizer.exe"
         else:
-            exe = DIST_DIR / "MediaManager"
+            exe = DIST_DIR / "ImageOptimizer"
         print(f"    Output: {exe}")
     else:
-        out_dir = DIST_DIR / "MediaManager"
+        out_dir = DIST_DIR / "ImageOptimizer"
         if sys.platform == "win32":
-            exe = out_dir / "MediaManager.exe"
+            exe = out_dir / "ImageOptimizer.exe"
         else:
-            exe = out_dir / "MediaManager"
+            exe = out_dir / "ImageOptimizer"
         print(f"    Output: {out_dir}/")
         print(f"    Executable: {exe}")
 
@@ -124,14 +124,14 @@ def build(onefile: bool = False):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Build MediaManager executable")
+    parser = argparse.ArgumentParser(description="Build Image Optimizer executable")
     parser.add_argument("--onefile", action="store_true", help="Build single .exe file")
     parser.add_argument("--clean", action="store_true", help="Remove build artifacts")
     parser.add_argument("--install-deps", action="store_true", help="Only install dependencies")
     args = parser.parse_args()
 
     print("=" * 50)
-    print("  MediaManager Build Script")
+    print("  Image Optimizer Build Script")
     print("  Hency Prajapati (Known Click Technologies)")
     print("=" * 50)
 

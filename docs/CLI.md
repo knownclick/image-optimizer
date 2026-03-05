@@ -3,7 +3,7 @@
 Complete reference for all command line operations. Image Optimizer uses Python's Click framework, so every command supports `--help` for detailed usage.
 
 ```bash
-python -m mediamanager --help
+python -m image_optimizer --help
 ```
 
 ---
@@ -13,6 +13,7 @@ python -m mediamanager --help
 - [Getting Started](#getting-started)
 - [convert](#convert)
 - [resize](#resize)
+- [crop](#crop)
 - [compress](#compress)
 - [thumbnail](#thumbnail)
 - [metadata](#metadata)
@@ -36,19 +37,19 @@ python -m mediamanager --help
 pip install -e .
 
 # Launch the GUI
-python -m mediamanager --gui
+python -m image_optimizer --gui
 
 # Show version
-python -m mediamanager --version
+python -m image_optimizer --version
 
 # List commands
-python -m mediamanager --help
+python -m image_optimizer --help
 ```
 
-If installed via pip, you can also use the `mediamanager` entry point directly:
+If installed via pip, you can also use the `image-optimizer` entry point directly:
 
 ```bash
-mediamanager convert photo.jpg photo.webp -f webp
+image-optimizer convert photo.jpg photo.webp -f webp
 ```
 
 > **Metadata profiles** (save/load reusable metadata presets) are available in the GUI only. Use the Profiles tab to manage them, then load profiles from the dropdown in the Process, Metadata, or Bulk tabs.
@@ -60,7 +61,7 @@ mediamanager convert photo.jpg photo.webp -f webp
 Convert an image to a different format.
 
 ```
-python -m mediamanager convert INPUT OUTPUT -f FORMAT [OPTIONS]
+python -m image_optimizer convert INPUT OUTPUT -f FORMAT [OPTIONS]
 ```
 
 **Arguments:**
@@ -85,16 +86,16 @@ python -m mediamanager convert INPUT OUTPUT -f FORMAT [OPTIONS]
 
 ```bash
 # JPEG to WebP
-python -m mediamanager convert photo.jpg photo.webp -f webp
+python -m image_optimizer convert photo.jpg photo.webp -f webp
 
 # PNG to JPEG at quality 90
-python -m mediamanager convert screenshot.png screenshot.jpg -f jpg -q 90
+python -m image_optimizer convert screenshot.png screenshot.jpg -f jpg -q 90
 
 # Lossless AVIF
-python -m mediamanager convert logo.png logo.avif -f avif --lossless
+python -m image_optimizer convert logo.png logo.avif -f avif --lossless
 
 # Convert without metadata
-python -m mediamanager convert photo.jpg clean.png -f png --no-metadata
+python -m image_optimizer convert photo.jpg clean.png -f png --no-metadata
 ```
 
 **Notes:**
@@ -109,7 +110,7 @@ python -m mediamanager convert photo.jpg clean.png -f png --no-metadata
 Resize an image using different modes.
 
 ```
-python -m mediamanager resize INPUT OUTPUT [OPTIONS]
+python -m image_optimizer resize INPUT OUTPUT [OPTIONS]
 ```
 
 **Options:**
@@ -137,16 +138,64 @@ python -m mediamanager resize INPUT OUTPUT [OPTIONS]
 
 ```bash
 # Fit within 800px wide (height auto-calculated)
-python -m mediamanager resize photo.jpg resized.jpg -W 800
+python -m image_optimizer resize photo.jpg resized.jpg -W 800
 
 # Exact dimensions
-python -m mediamanager resize photo.jpg exact.jpg -W 1920 -H 1080 --mode exact
+python -m image_optimizer resize photo.jpg exact.jpg -W 1920 -H 1080 --mode exact
 
 # Fill and crop to square
-python -m mediamanager resize photo.jpg square.jpg -W 500 -H 500 --mode fill
+python -m image_optimizer resize photo.jpg square.jpg -W 500 -H 500 --mode fill
 
 # Scale to 25%
-python -m mediamanager resize photo.jpg quarter.jpg -p 25 --mode percentage
+python -m image_optimizer resize photo.jpg quarter.jpg -p 25 --mode percentage
+```
+
+---
+
+## crop
+
+Crop an image by aspect ratio, center crop, or coordinates.
+
+```
+python -m image_optimizer crop INPUT OUTPUT [OPTIONS]
+```
+
+**Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `-a`, `--aspect-ratio` | string | — | Aspect ratio preset: `1:1`, `4:3`, `3:2`, `16:9`, `9:16`, `3:4`, `2:3` |
+| `--anchor` | string | `center` | Anchor position: `center`, `top-left`, `top-right`, `bottom-left`, `bottom-right` |
+| `-W`, `--width` | integer | — | Crop width in pixels (for center/coordinate crop) |
+| `-H`, `--height` | integer | — | Crop height in pixels (for center/coordinate crop) |
+| `-x` | integer | — | Crop X coordinate (top-left corner) |
+| `-y` | integer | — | Crop Y coordinate (top-left corner) |
+| `-f`, `--format` | string | same as input | Output format |
+| `-q`, `--quality` | integer | — | Output quality |
+| `--overwrite` | flag | — | Overwrite existing output |
+
+**Crop Modes:**
+
+| Mode | Usage | Description |
+|------|-------|-------------|
+| Aspect ratio | `-a 16:9` | Crop to a preset aspect ratio from the anchor position |
+| Center crop | `-W 400 -H 300` | Crop a WxH region from the center of the image |
+| Coordinates | `-W 400 -H 300 -x 100 -y 50` | Crop a WxH region starting at (x, y) |
+
+**Examples:**
+
+```bash
+# Crop to square (1:1) from center
+python -m image_optimizer crop photo.jpg square.jpg -a 1:1
+
+# Crop to 16:9 from top-left corner
+python -m image_optimizer crop photo.jpg wide.jpg -a 16:9 --anchor top-left
+
+# Center crop 400x400 pixels
+python -m image_optimizer crop photo.jpg center.jpg -W 400 -H 400
+
+# Coordinate-based crop: 200x200 starting at (100, 50)
+python -m image_optimizer crop photo.jpg region.jpg -W 200 -H 200 -x 100 -y 50
 ```
 
 ---
@@ -156,7 +205,7 @@ python -m mediamanager resize photo.jpg quarter.jpg -p 25 --mode percentage
 Compress or optimize an image.
 
 ```
-python -m mediamanager compress INPUT OUTPUT [OPTIONS]
+python -m image_optimizer compress INPUT OUTPUT [OPTIONS]
 ```
 
 **Options:**
@@ -173,13 +222,13 @@ python -m mediamanager compress INPUT OUTPUT [OPTIONS]
 
 ```bash
 # Reduce JPEG quality
-python -m mediamanager compress photo.jpg optimized.jpg -q 75
+python -m image_optimizer compress photo.jpg optimized.jpg -q 75
 
 # Compress to under 500KB (binary search for optimal quality)
-python -m mediamanager compress photo.jpg small.jpg --max-size 500
+python -m image_optimizer compress photo.jpg small.jpg --max-size 500
 
 # Lossless WebP compression
-python -m mediamanager compress photo.png optimized.webp -f webp --lossless
+python -m image_optimizer compress photo.png optimized.webp -f webp --lossless
 ```
 
 ---
@@ -189,7 +238,7 @@ python -m mediamanager compress photo.png optimized.webp -f webp --lossless
 Generate a thumbnail image.
 
 ```
-python -m mediamanager thumbnail INPUT OUTPUT [OPTIONS]
+python -m image_optimizer thumbnail INPUT OUTPUT [OPTIONS]
 ```
 
 **Options:**
@@ -216,9 +265,9 @@ Pass an integer instead of a preset name for custom square sizes.
 **Examples:**
 
 ```bash
-python -m mediamanager thumbnail photo.jpg thumb_sm.jpg -s small
-python -m mediamanager thumbnail photo.jpg thumb_200.jpg -s 200
-python -m mediamanager thumbnail photo.jpg thumb_sq.jpg -s large --square
+python -m image_optimizer thumbnail photo.jpg thumb_sm.jpg -s small
+python -m image_optimizer thumbnail photo.jpg thumb_200.jpg -s 200
+python -m image_optimizer thumbnail photo.jpg thumb_sq.jpg -s large --square
 ```
 
 **Note:** Thumbnails never upscale. If the source is smaller than the requested size, the output will match the source dimensions.
@@ -232,20 +281,20 @@ Read, write, or strip EXIF metadata. This is a command group with subcommands.
 ### metadata read
 
 ```
-python -m mediamanager metadata read INPUT [--json]
+python -m image_optimizer metadata read INPUT [--json]
 ```
 
 Displays image metadata including format, dimensions, file size, and EXIF tags.
 
 ```bash
-python -m mediamanager metadata read photo.jpg
-python -m mediamanager metadata read photo.jpg --json
+python -m image_optimizer metadata read photo.jpg
+python -m image_optimizer metadata read photo.jpg --json
 ```
 
 ### metadata strip
 
 ```
-python -m mediamanager metadata strip INPUT [OUTPUT] [OPTIONS]
+python -m image_optimizer metadata strip INPUT [OUTPUT] [OPTIONS]
 ```
 
 Remove all EXIF metadata from an image.
@@ -256,8 +305,8 @@ Remove all EXIF metadata from an image.
 | `--overwrite` | Overwrite existing output |
 
 ```bash
-python -m mediamanager metadata strip photo.jpg clean.jpg
-python -m mediamanager metadata strip photo.jpg --in-place
+python -m image_optimizer metadata strip photo.jpg clean.jpg
+python -m image_optimizer metadata strip photo.jpg --in-place
 ```
 
 For JPEG files modified in-place, piexif performs a lossless strip without re-encoding.
@@ -265,7 +314,7 @@ For JPEG files modified in-place, piexif performs a lossless strip without re-en
 ### metadata write
 
 ```
-python -m mediamanager metadata write INPUT OUTPUT [OPTIONS]
+python -m image_optimizer metadata write INPUT OUTPUT [OPTIONS]
 ```
 
 Write custom EXIF fields. Only JPEG and WebP support EXIF writing.
@@ -281,7 +330,7 @@ Write custom EXIF fields. Only JPEG and WebP support EXIF writing.
 | `--overwrite` | Overwrite existing output |
 
 ```bash
-python -m mediamanager metadata write photo.jpg tagged.jpg \
+python -m image_optimizer metadata write photo.jpg tagged.jpg \
   --artist "Jane Doe" \
   --copyright "2024 Jane Doe" \
   --description "Sunset at the beach"
@@ -294,7 +343,7 @@ python -m mediamanager metadata write photo.jpg tagged.jpg \
 Generate a multi-size ICO favicon from any image.
 
 ```
-python -m mediamanager favicon INPUT OUTPUT [OPTIONS]
+python -m image_optimizer favicon INPUT OUTPUT [OPTIONS]
 ```
 
 | Option | Type | Default | Description |
@@ -305,8 +354,8 @@ python -m mediamanager favicon INPUT OUTPUT [OPTIONS]
 The input image is center-cropped to square if it isn't already, then each size layer is generated and packed into a single `.ico` file.
 
 ```bash
-python -m mediamanager favicon logo.png favicon.ico
-python -m mediamanager favicon logo.png favicon.ico --sizes 16,32,48,64,128,256
+python -m image_optimizer favicon logo.png favicon.ico
+python -m image_optimizer favicon logo.png favicon.ico --sizes 16,32,48,64,128,256
 ```
 
 ---
@@ -320,7 +369,7 @@ Bulk operations on entire directories. This is a command group with subcommands.
 Convert all images in a directory.
 
 ```
-python -m mediamanager bulk convert INPUT_DIR OUTPUT_DIR -f FORMAT [OPTIONS]
+python -m image_optimizer bulk convert INPUT_DIR OUTPUT_DIR -f FORMAT [OPTIONS]
 ```
 
 | Option | Type | Description |
@@ -338,13 +387,13 @@ When `--recursive` is used, the directory structure is mirrored in the output fo
 
 ```bash
 # Convert all images to WebP
-python -m mediamanager bulk convert ./photos ./webp_output -f webp
+python -m image_optimizer bulk convert ./photos ./webp_output -f webp
 
 # Recursive, only PNGs
-python -m mediamanager bulk convert ./assets ./converted -f jpg -r --source-formats png
+python -m image_optimizer bulk convert ./assets ./converted -f jpg -r --source-formats png
 
 # High quality with metadata stripped
-python -m mediamanager bulk convert ./raw ./processed -f webp -q 95 --no-metadata
+python -m image_optimizer bulk convert ./raw ./processed -f webp -q 95 --no-metadata
 ```
 
 ### bulk rename
@@ -352,7 +401,7 @@ python -m mediamanager bulk convert ./raw ./processed -f webp -q 95 --no-metadat
 Rename image files using pattern tokens.
 
 ```
-python -m mediamanager bulk rename INPUT_DIR --pattern PATTERN [OPTIONS]
+python -m image_optimizer bulk rename INPUT_DIR --pattern PATTERN [OPTIONS]
 ```
 
 | Option | Type | Default | Description |
@@ -380,14 +429,14 @@ Rename uses a two-phase process to prevent conflicts (e.g. swapping A and B).
 
 ```bash
 # Sequential numbering
-python -m mediamanager bulk rename ./photos --pattern "photo_{n:03d}.{ext}"
+python -m image_optimizer bulk rename ./photos --pattern "photo_{n:03d}.{ext}"
 
 # Preview first, then commit
-python -m mediamanager bulk rename ./photos --pattern "img_{n}.{ext}" --dry-run
-python -m mediamanager bulk rename ./photos --pattern "img_{n}.{ext}"
+python -m image_optimizer bulk rename ./photos --pattern "img_{n}.{ext}" --dry-run
+python -m image_optimizer bulk rename ./photos --pattern "img_{n}.{ext}"
 
 # Include dimensions in filename
-python -m mediamanager bulk rename ./photos --pattern "{name}_{w}x{h}.{ext}"
+python -m image_optimizer bulk rename ./photos --pattern "{name}_{w}x{h}.{ext}"
 ```
 
 ---
@@ -423,7 +472,7 @@ python -m mediamanager bulk rename ./photos --pattern "{name}_{w}x{h}.{ext}"
 **Web optimization pipeline:**
 ```bash
 # Convert all PNGs to WebP at quality 80, recursively
-python -m mediamanager bulk convert ./src/images ./dist/images -f webp -q 80 -r
+python -m image_optimizer bulk convert ./src/images ./dist/images -f webp -q 80 -r
 ```
 
 **Generate responsive thumbnails:**
@@ -431,21 +480,29 @@ python -m mediamanager bulk convert ./src/images ./dist/images -f webp -q 80 -r
 # Use the GUI Bulk > Thumbnail mode with sizes 150, 300, 600
 # Or script it with the single-file command:
 for img in ./photos/*.jpg; do
-  python -m mediamanager thumbnail "$img" "./thumbs/sm_$(basename $img)" -s small
-  python -m mediamanager thumbnail "$img" "./thumbs/md_$(basename $img)" -s medium
-  python -m mediamanager thumbnail "$img" "./thumbs/lg_$(basename $img)" -s large
+  python -m image_optimizer thumbnail "$img" "./thumbs/sm_$(basename $img)" -s small
+  python -m image_optimizer thumbnail "$img" "./thumbs/md_$(basename $img)" -s medium
+  python -m image_optimizer thumbnail "$img" "./thumbs/lg_$(basename $img)" -s large
 done
+```
+
+**Crop all images to 16:9 for social media:**
+```bash
+# Single file
+python -m image_optimizer crop photo.jpg social.jpg -a 16:9
+
+# Bulk (use the GUI Bulk tab with crop enabled)
 ```
 
 **Clean metadata before publishing:**
 ```bash
-python -m mediamanager bulk convert ./photos ./clean -f jpg --no-metadata
+python -m image_optimizer bulk convert ./photos ./clean -f jpg --no-metadata
 ```
 
 **Batch rename for consistency:**
 ```bash
 # Preview first
-python -m mediamanager bulk rename ./uploads --pattern "product_{n:04d}.{ext}" --dry-run
+python -m image_optimizer bulk rename ./uploads --pattern "product_{n:04d}.{ext}" --dry-run
 # If it looks right, run for real
-python -m mediamanager bulk rename ./uploads --pattern "product_{n:04d}.{ext}"
+python -m image_optimizer bulk rename ./uploads --pattern "product_{n:04d}.{ext}"
 ```

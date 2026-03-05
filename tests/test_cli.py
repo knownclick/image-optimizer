@@ -6,7 +6,7 @@ import pytest
 from click.testing import CliRunner
 from PIL import Image
 
-from mediamanager.cli.app import main
+from image_optimizer.cli.app import main
 
 
 @pytest.fixture
