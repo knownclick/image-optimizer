@@ -59,6 +59,22 @@ Pass `--cli` to install without launching the GUI:
 setup.bat --cli        # Windows
 ```
 
+To update to the latest version:
+
+```bash
+cd image-optimizer
+git pull
+./setup.sh              # Linux / macOS
+setup.bat                # Windows
+```
+
+To uninstall:
+
+```bash
+pip uninstall image-optimizer
+rm -rf .venv             # Remove virtual environment
+```
+
 After setup, activate the environment and use the CLI directly:
 
 ```bash
